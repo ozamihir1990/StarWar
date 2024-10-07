@@ -108,7 +108,7 @@ android {
 }
 
 dependencies {
-    // The version of react-native is set by the React Native Gradle Plugin
+    // React Native and dependencies
     implementation("com.facebook.react:react-android")
 
     if (hermesEnabled.toBoolean()) {
@@ -116,4 +116,6 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+    // Add react-native-camera
+    implementation project(':react-native-camera')
 }
