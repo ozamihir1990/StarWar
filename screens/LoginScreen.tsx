@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { styles } from '../styles/LoginScreen.style';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -11,16 +11,13 @@ const LoginScreen = ({ navigation }) => {
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
-    // Simulating user login
     const userData = await AsyncStorage.getItem('users');
     const users = userData ? JSON.parse(userData) : [];
 
     const user = users.find(user => user.email === email && user.password === password);
 
     if (user) {
-      // Fetch user data from Star Wars API
       try {
-        // Use the user's name or another identifier to get data
         const response = await axios.get(`https://swapi.dev/api/people/?search=${user.name}`);
         const userInfo = response.data.results[0];
 
@@ -44,36 +41,38 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Logo />
-      {/* <Image
-        source={require('../assets/star-wars-logo.svg')} // Ensure the path is correct
-        // style={styles.logo}
-        resizeMode="contain" // Ensures the logo scales properly
-      /> */}
-      <Text style={styles.title}>Login</Text>
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor={styles.placeholderTextColor.color}
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor={styles.placeholderTextColor.color}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.link}>Don't have an account? Sign Up</Text>
-    </TouchableOpacity>
-  </View>
+      {/* Logo at the top */}
+      <View style={styles.logoWrapper}>
+        <Logo />
+      </View>
+
+      {/* Login form below */}
+      <View style={styles.formContainer}>
+        <Text style={styles.title}>Login</Text>
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor={styles.placeholderTextColor.color}
+          value={email}
+          onChangeText={setEmail}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor={styles.placeholderTextColor.color}
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+          <Text style={styles.link}>Don't have an account? Sign Up</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
 

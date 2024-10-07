@@ -3,10 +3,17 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
     backgroundColor: '#1F1F1F', // Dark background color
+  },
+  logoWrapper: {
+    alignItems: 'center',
+    marginTop: 20, // Space the logo from the top of the screen
+  },
+  formContainer: {
+    flex: 1,
+    justifyContent: 'flex-start', // Center the form
+    alignItems: 'center',
+    paddingHorizontal: 16,
   },
   title: {
     fontSize: 28,
