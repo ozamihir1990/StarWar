@@ -23,7 +23,7 @@ const ProfileScreen = ({ route }) => {
       </View>
 
       <View style={styles.profileContainer}>
-        <Text style={styles.title}>{user.email}'s Profile</Text>
+        <Text style={styles.title}>{user.planetData.name}'s Profile</Text>
 
         {/* Display profile photo */}
         <Image
