@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { styles } from '../styles/LoginScreen.style';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 import Logo from './Logo';
 
 const LoginScreen = ({ navigation }) => {
@@ -14,26 +13,12 @@ const LoginScreen = ({ navigation }) => {
     const userData = await AsyncStorage.getItem('users');
     const users = userData ? JSON.parse(userData) : [];
 
+    // Find the user with matching credentials
     const user = users.find(user => user.email === email && user.password === password);
 
     if (user) {
-      try {
-        const response = await axios.get(`https://swapi.dev/api/people/?search=${user.name}`);
-        const userInfo = response.data.results[0];
-
-        navigation.navigate('Profile', {
-          user: {
-            ...user,
-            height: userInfo.height,
-            mass: userInfo.mass,
-            birth_year: userInfo.birth_year,
-            gender: userInfo.gender,
-          },
-        });
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        setError('Failed to fetch user data from the Star Wars API.');
-      }
+      // Navigate to the Profile screen with the user data
+      navigation.navigate('Profile', { user });
     } else {
       setError('User not found');
     }

@@ -1,13 +1,28 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, Image, Platform, PermissionsAndroid } from 'react-native';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  Image,
+  Platform,
+  PermissionsAndroid,
+} from 'react-native';
+import {
+  launchCamera,
+  launchImageLibrary,
+  ImageLibraryOptions,
+  CameraOptions,
+} from 'react-native-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import { styles } from '../styles/RegistrationScreen.style';
 
-const RegistrationScreen = () => {
+const RegistrationScreen = ({ navigation }) => { // Destructure navigation from props
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [profilePhoto, setProfilePhoto] = useState<any>(null);
+  const [profilePhoto, setProfilePhoto] = useState(null);
   const [error, setError] = useState('');
 
   // Request camera and storage permissions for Android
@@ -36,7 +51,8 @@ const RegistrationScreen = () => {
         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
         {
           title: 'Storage Permission',
-          message: 'We need access to your storage to select a profile picture from the gallery',
+          message:
+            'We need access to your storage to select a profile picture from the gallery',
           buttonNeutral: 'Ask Me Later',
           buttonNegative: 'Cancel',
           buttonPositive: 'OK',
@@ -82,7 +98,7 @@ const RegistrationScreen = () => {
       }
     }
 
-    const options = {
+    const options: CameraOptions = {
       mediaType: 'photo',
       quality: 1,
     };
@@ -91,9 +107,14 @@ const RegistrationScreen = () => {
       if (response.didCancel) {
         Alert.alert('Cancelled', 'You cancelled taking a photo.');
       } else if (response.errorCode) {
-        Alert.alert('Error', response.errorMessage || 'An error occurred while taking the photo.');
-      } else {
+        Alert.alert(
+          'Error',
+          response.errorMessage || 'An error occurred while taking the photo.'
+        );
+      } else if (response.assets && response.assets.length > 0) {
         setProfilePhoto(response.assets[0].uri); // Set the selected photo URI
+      } else {
+        Alert.alert('Error', 'An unexpected error occurred.');
       }
     });
   };
@@ -108,7 +129,7 @@ const RegistrationScreen = () => {
       }
     }
 
-    const options = {
+    const options: ImageLibraryOptions = {
       mediaType: 'photo',
       quality: 1,
     };
@@ -117,23 +138,38 @@ const RegistrationScreen = () => {
       if (response.didCancel) {
         Alert.alert('Cancelled', 'You cancelled selecting a photo.');
       } else if (response.errorCode) {
-        Alert.alert('Error', response.errorMessage || 'An error occurred while selecting the photo.');
-      } else {
+        Alert.alert(
+          'Error',
+          response.errorMessage || 'An error occurred while selecting the photo.'
+        );
+      } else if (response.assets && response.assets.length > 0) {
         setProfilePhoto(response.assets[0].uri); // Set the selected photo URI
+      } else {
+        Alert.alert('Error', 'An unexpected error occurred.');
       }
     });
   };
 
-  const handleRegistration = () => {
+  const handleRegistration = async () => {
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
       return;
     }
-
     if (email && password && profilePhoto) {
-      Alert.alert('Registration Successful', `Welcome, ${email}!`);
+      const newUser = { email, password, profilePhoto };
+      // Retrieve existing users from AsyncStorage
+      let existingUsers = await AsyncStorage.getItem('users');
+      existingUsers = existingUsers ? JSON.parse(existingUsers) : [];
+      // Save new user data
+      await AsyncStorage.setItem('users', JSON.stringify([...existingUsers, newUser]));
+      // Show success message and navigate to Login screen
+      Alert.alert('Registration Successful', `Welcome, ${email}!`, [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('Login'), // Redirect to login screen
+        },
+      ]);
       setError('');
-      // Logic to store user data, including profile photo URI
     } else {
       setError('Please fill all fields and select a profile photo.');
     }
@@ -169,7 +205,10 @@ const RegistrationScreen = () => {
 
       {/* Show the selected profile photo */}
       {profilePhoto && (
-        <Image source={{ uri: profilePhoto }} style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 20 }} />
+        <Image
+          source={{ uri: profilePhoto }}
+          style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 20 }}
+        />
       )}
 
       {/* Error message */}
@@ -186,7 +225,7 @@ const RegistrationScreen = () => {
       </TouchableOpacity>
 
       {/* Link to login screen */}
-      <TouchableOpacity onPress={() => Alert.alert('Navigate to Login Screen')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Text style={styles.link}>Already have an account? Login here</Text>
       </TouchableOpacity>
     </View>
