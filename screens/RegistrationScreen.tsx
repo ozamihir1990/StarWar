@@ -152,8 +152,8 @@ const RegistrationScreen = ({ navigation }) => {
       setError('Passwords do not match.');
       return;
     }
-    if (email && password && profilePhoto && height && mass && birthYear && gender) {
-      const newUser = { email, password, profilePhoto, height, mass, birthYear, gender };
+    if (email && password && profilePhoto) {
+      const newUser = { email, password, profilePhoto };
       let existingUsers = await AsyncStorage.getItem('users');
       existingUsers = existingUsers ? JSON.parse(existingUsers) : [];
       await AsyncStorage.setItem('users', JSON.stringify([...existingUsers, newUser]));
@@ -197,7 +197,7 @@ const RegistrationScreen = ({ navigation }) => {
         onChangeText={setConfirmPassword}
         secureTextEntry={true}
       />
-      <TextInput
+      {/* <TextInput
         style={styles.input}
         placeholder="Height"
         placeholderTextColor={styles.placeholderTextColor.color}
@@ -227,7 +227,7 @@ const RegistrationScreen = ({ navigation }) => {
         placeholderTextColor={styles.placeholderTextColor.color}
         value={gender}
         onChangeText={setGender}
-      />
+      /> */}
 
       {/* Show the selected profile photo */}
       {profilePhoto && (
