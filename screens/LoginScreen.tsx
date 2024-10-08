@@ -10,11 +10,9 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  // Function to fetch planet data based on the email
   const fetchPlanetData = async (email) => {
     let endpoint = '';
 
-    // Decide API endpoint based on the email
     if (email === 'luke_skywalker@starwars.com') {
       endpoint = 'people/1/';
     } else if (email === 'anakin_skywalker@starwars.com') {
@@ -60,12 +58,10 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* Logo at the top */}
       <View style={styles.logoWrapper}>
         <Logo />
       </View>
 
-      {/* Login form below */}
       <View style={styles.formContainer}>
         <Text style={styles.title}>Login</Text>
         {error ? <Text style={styles.error}>{error}</Text> : null}

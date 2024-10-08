@@ -1,12 +1,11 @@
 import React from 'react';
-import { View, Text, Image, ActivityIndicator } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { styles } from '../styles/ProfileScreen.style';
 import Logo from './Logo';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const ProfileScreen = ({ route }) => {
-  const { user } = route.params; // Destructure user data from the route parameters
-
-  // If no planet data exists, show an error message
+  const { user } = route.params;
   if (!user.planetData) {
     return (
       <View style={styles.container}>
@@ -21,11 +20,11 @@ const ProfileScreen = ({ route }) => {
       <View style={styles.logoWrapper}>
         <Logo />
       </View>
-
+      <ScrollView>
+      {user.planetData && (
       <View style={styles.profileContainer}>
         <Text style={styles.title}>{user.planetData.name}'s Profile</Text>
 
-        {/* Display profile photo */}
         <Image
           source={user.profilePhoto ? { uri: user.profilePhoto } : require('../assets/star-wars-logo-1.png')}
           style={styles.photo}
@@ -51,13 +50,8 @@ const ProfileScreen = ({ route }) => {
           <Text style={styles.infoValue}>{user.planetData.gender}</Text>
         </View>
 
-        {/* Display planet information */}
-        {user.planetData && (
-          <View style={styles.planetContainer}>
-            <Text style={styles.planetTitle}>Home Planet</Text>
-
-            <View style={styles.infoWrapper}>
-              <Text style={styles.infoLabel}>Name:</Text>
+        <View style={styles.infoWrapper}>
+              <Text style={styles.infoLabel}>Planet Name:</Text>
               <Text style={styles.infoValue}>{user.planetData.name}</Text>
             </View>
 
@@ -75,9 +69,34 @@ const ProfileScreen = ({ route }) => {
               <Text style={styles.infoLabel}>Terrain:</Text>
               <Text style={styles.infoValue}>{user.planetData.terrain}</Text>
             </View>
-          </View>
-        )}
-      </View>
+
+            <View style={styles.infoWrapper}>
+              <Text style={styles.infoLabel}>Gravity:</Text>
+              <Text style={styles.infoValue}>{user.planetData.gravity}</Text>
+            </View>
+
+            <View style={styles.infoWrapper}>
+              <Text style={styles.infoLabel}>Diameter:</Text>
+              <Text style={styles.infoValue}>{user.planetData.diameter} km</Text>
+            </View>
+
+            <View style={styles.infoWrapper}>
+              <Text style={styles.infoLabel}>Orbital Period:</Text>
+              <Text style={styles.infoValue}>{user.planetData.orbital_period} days</Text>
+            </View>
+
+            <View style={styles.infoWrapper}>
+              <Text style={styles.infoLabel}>Rotation Period:</Text>
+              <Text style={styles.infoValue}>{user.planetData.rotation_period} hours</Text>
+            </View>
+
+            <View style={styles.infoWrapper}>
+              <Text style={styles.infoLabel}>Surface Water:</Text>
+              <Text style={styles.infoValue}>{user.planetData.surface_water}%</Text>
+            </View>
+      </View>)}
+    </ScrollView>
+
     </View>
   );
 };
