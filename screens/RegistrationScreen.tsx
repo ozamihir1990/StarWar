@@ -18,12 +18,16 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import { styles } from '../styles/RegistrationScreen.style';
 
-const RegistrationScreen = ({ navigation }) => { // Destructure navigation from props
+const RegistrationScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [error, setError] = useState('');
+  const [height, setHeight] = useState('');
+  const [mass, setMass] = useState('');
+  const [birthYear, setBirthYear] = useState('');
+  const [gender, setGender] = useState('');
 
   // Request camera and storage permissions for Android
   const requestCameraPermission = async () => {
@@ -51,8 +55,7 @@ const RegistrationScreen = ({ navigation }) => { // Destructure navigation from 
         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
         {
           title: 'Storage Permission',
-          message:
-            'We need access to your storage to select a profile picture from the gallery',
+          message: 'We need access to your storage to select a profile picture from the gallery',
           buttonNeutral: 'Ask Me Later',
           buttonNegative: 'Cancel',
           buttonPositive: 'OK',
@@ -107,10 +110,7 @@ const RegistrationScreen = ({ navigation }) => { // Destructure navigation from 
       if (response.didCancel) {
         Alert.alert('Cancelled', 'You cancelled taking a photo.');
       } else if (response.errorCode) {
-        Alert.alert(
-          'Error',
-          response.errorMessage || 'An error occurred while taking the photo.'
-        );
+        Alert.alert('Error', response.errorMessage || 'An error occurred while taking the photo.');
       } else if (response.assets && response.assets.length > 0) {
         setProfilePhoto(response.assets[0].uri); // Set the selected photo URI
       } else {
@@ -138,10 +138,7 @@ const RegistrationScreen = ({ navigation }) => { // Destructure navigation from 
       if (response.didCancel) {
         Alert.alert('Cancelled', 'You cancelled selecting a photo.');
       } else if (response.errorCode) {
-        Alert.alert(
-          'Error',
-          response.errorMessage || 'An error occurred while selecting the photo.'
-        );
+        Alert.alert('Error', response.errorMessage || 'An error occurred while selecting the photo.');
       } else if (response.assets && response.assets.length > 0) {
         setProfilePhoto(response.assets[0].uri); // Set the selected photo URI
       } else {
@@ -155,18 +152,15 @@ const RegistrationScreen = ({ navigation }) => { // Destructure navigation from 
       setError('Passwords do not match.');
       return;
     }
-    if (email && password && profilePhoto) {
-      const newUser = { email, password, profilePhoto };
-      // Retrieve existing users from AsyncStorage
+    if (email && password && profilePhoto && height && mass && birthYear && gender) {
+      const newUser = { email, password, profilePhoto, height, mass, birthYear, gender };
       let existingUsers = await AsyncStorage.getItem('users');
       existingUsers = existingUsers ? JSON.parse(existingUsers) : [];
-      // Save new user data
       await AsyncStorage.setItem('users', JSON.stringify([...existingUsers, newUser]));
-      // Show success message and navigate to Login screen
       Alert.alert('Registration Successful', `Welcome, ${email}!`, [
         {
           text: 'OK',
-          onPress: () => navigation.navigate('Login'), // Redirect to login screen
+          onPress: () => navigation.navigate('Login'),
         },
       ]);
       setError('');
@@ -178,10 +172,11 @@ const RegistrationScreen = ({ navigation }) => { // Destructure navigation from 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sign Up</Text>
+
       <TextInput
         style={styles.input}
         placeholder="Email"
-        placeholderTextColor={styles.placeholderTextColor.color} // Reference to the placeholder style
+        placeholderTextColor={styles.placeholderTextColor.color}
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
@@ -189,7 +184,7 @@ const RegistrationScreen = ({ navigation }) => { // Destructure navigation from 
       <TextInput
         style={styles.input}
         placeholder="Password"
-        placeholderTextColor={styles.placeholderTextColor.color} // Reference to the placeholder style
+        placeholderTextColor={styles.placeholderTextColor.color}
         value={password}
         onChangeText={setPassword}
         secureTextEntry={true}
@@ -197,10 +192,41 @@ const RegistrationScreen = ({ navigation }) => { // Destructure navigation from 
       <TextInput
         style={styles.input}
         placeholder="Confirm Password"
-        placeholderTextColor={styles.placeholderTextColor.color} // Reference to the placeholder style
+        placeholderTextColor={styles.placeholderTextColor.color}
         value={confirmPassword}
         onChangeText={setConfirmPassword}
         secureTextEntry={true}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Height"
+        placeholderTextColor={styles.placeholderTextColor.color}
+        value={height}
+        onChangeText={setHeight}
+        keyboardType="numeric"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Mass"
+        placeholderTextColor={styles.placeholderTextColor.color}
+        value={mass}
+        onChangeText={setMass}
+        keyboardType="numeric"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Birth Year"
+        placeholderTextColor={styles.placeholderTextColor.color}
+        value={birthYear}
+        onChangeText={setBirthYear}
+        keyboardType="numeric"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Gender"
+        placeholderTextColor={styles.placeholderTextColor.color}
+        value={gender}
+        onChangeText={setGender}
       />
 
       {/* Show the selected profile photo */}
